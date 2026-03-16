@@ -1,0 +1,16 @@
+# Dataset (Quan trọng nhất)
+dataset/
+images/
+*.jpg
+*.png
+*.zip
+
+# Python rác
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Thư mục IDE
+.vscode/
+.idea/

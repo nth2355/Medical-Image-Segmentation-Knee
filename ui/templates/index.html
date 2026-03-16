@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Knee X-ray Segmentation</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+
+  <body>
+    <h1>Knee X-ray Segmentation System</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="image" required />
+
+      <select name="method">
+        <option value="unet">U-Net (Deep Learning)</option>
+        <option value="traditional">Traditional Image Processing</option>
+      </select>
+
+      <button type="submit">Analyze</button>
+    </form>
+
+    <br />
+
+    <a href="/evaluate">
+      <button type="button">Evaluate Dataset</button>
+    </a>
+
+    {% if result %}
+
+    <!-- INPUT IMAGE -->
+
+    <h2>Input Image</h2>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Input</h3>
+        <img src="/{{result.input}}" />
+      </div>
+    </div>
+
+    <!-- UNET RESULT -->
+
+    {% if result.method == "unet" %}
+
+    <h2>U-Net Segmentation</h2>
+
+    {% if result.metrics %}
+
+    <h2>Model Evaluation</h2>
+
+    <div class="metrics">
+      <p><b>IoU:</b> {{result.metrics.iou}}</p>
+      <p><b>Dice:</b> {{result.metrics.dice}}</p>
+      <p><b>Accuracy:</b> {{result.metrics.accuracy}}</p>
+      <p><b>Precision:</b> {{result.metrics.precision}}</p>
+      <p><b>Recall:</b> {{result.metrics.recall}}</p>
+    </div>
+
+    {% endif %}
+
+    <div class="grid">
+      <div class="card">
+        <h3>Mask</h3>
+        <img src="/{{result.mask}}" />
+      </div>
+
+      <div class="card">
+        <h3>Overlay</h3>
+        <img src="/{{result.overlay}}" />
+      </div>
+    </div>
+
+    {% endif %}
+
+    <!-- TRADITIONAL PIPELINE -->
+
+    {% if result.method == "traditional" %}
+
+    <h2>Traditional Processing Pipeline</h2>
+
+    <div class="grid">
+      {% for name, img in result.pipeline.items() %}
+
+      <div class="card">
+        <h3>{{ name.replace('_',' ').title() }}</h3>
+        <img src="/{{img}}" />
+      </div>
+
+      {% endfor %}
+    </div>
+
+    {% if result.metrics %}
+
+    <h2>Traditional Segmentation Evaluation</h2>
+
+    <div class="metrics">
+      <p><b>IoU:</b> {{result.metrics.iou}}</p>
+      <p><b>Dice:</b> {{result.metrics.dice}}</p>
+      <p><b>Accuracy:</b> {{result.metrics.accuracy}}</p>
+      <p><b>Precision:</b> {{result.metrics.precision}}</p>
+      <p><b>Recall:</b> {{result.metrics.recall}}</p>
+    </div>
+
+    {% endif %} {% endif %} {% endif %}
+  </body>
+</html>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Dataset Evaluation</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+
+  <body>
+    <h1>Dataset Evaluation</h1>
+
+    <div class="metrics">
+      <p><b>Test Samples:</b> {{metrics.samples}}</p>
+      <p><b>Mean IoU:</b> {{metrics.mean_iou}}</p>
+      <p><b>Mean Dice:</b> {{metrics.mean_dice}}</p>
+    </div>
+
+    <a href="/">Back</a>
+  </body>
+</html>
