@@ -14,3 +14,7 @@ __pycache__/
 # Thư mục IDE
 .vscode/
 .idea/
+
+
+saved_models/
+*.pth
