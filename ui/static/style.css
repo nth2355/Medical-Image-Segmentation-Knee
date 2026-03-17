@@ -3,29 +3,33 @@ body {
   background: #f5f6fa;
   text-align: center;
   padding: 40px;
+  max-width: 1200px;
+  margin: auto;
 }
 
+/* ===== TITLE ===== */
 h1 {
   margin-bottom: 30px;
 }
 
+h2 {
+  margin-top: 40px;
+}
+
+/* ===== FORM ===== */
 form {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
-button {
-  padding: 10px 20px;
-  background: #2f80ed;
-  border: none;
-  color: white;
+input,
+select {
+  padding: 8px;
+  margin: 5px;
   border-radius: 6px;
-  cursor: pointer;
+  border: 1px solid #ccc;
 }
 
-button:hover {
-  background: #1c5fd4;
-}
-
+/* ===== GRID ===== */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -33,28 +37,47 @@ button:hover {
   margin-top: 20px;
 }
 
+/* ===== CARD ===== */
 .card {
   background: white;
   padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
 }
 
 .card img {
   width: 100%;
-  border-radius: 6px;
-}
-.metrics {
-  background: #f2f2f2;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
+  border-radius: 8px;
 }
 
-button {
-  padding: 10px 20px;
-  border: none;
-  background: #007bff;
+/* ===== TABLE (METRICS) ===== */
+table {
+  margin: 20px auto;
+  border-collapse: collapse;
+  width: 350px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+th {
+  background: #2f80ed;
   color: white;
-  border-radius: 5px;
+}
+
+td,
+th {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+tr:last-child td {
+  border-bottom: none;
 }

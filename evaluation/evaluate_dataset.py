@@ -22,7 +22,6 @@ def evaluate_dataset():
             continue
 
         img = cv2.imread(img_path)
-
         pred = predict_mask(img)
 
         gt = cv2.imread(mask_path, 0)
@@ -32,6 +31,13 @@ def evaluate_dataset():
 
         iou_list.append(metrics["iou"])
         dice_list.append(metrics["dice"])
+
+    if len(iou_list) == 0:
+        return {
+            "mean_iou": 0,
+            "mean_dice": 0,
+            "samples": 0
+        }
 
     mean_iou = sum(iou_list) / len(iou_list)
     mean_dice = sum(dice_list) / len(dice_list)

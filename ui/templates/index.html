@@ -8,6 +8,8 @@
   <body>
     <h1>Knee X-ray Segmentation System</h1>
 
+    <!-- ================= FORM ================= -->
+
     <form method="POST" enctype="multipart/form-data">
       <input type="file" name="image" required />
 
@@ -21,16 +23,13 @@
 
     <br />
 
-    <a href="/evaluate">
-      <button type="button">Evaluate Dataset</button>
-    </a>
+    <!-- ================= RESULT ================= -->
 
     {% if result %}
 
     <!-- INPUT IMAGE -->
 
     <h2>Input Image</h2>
-
     <div class="grid">
       <div class="card">
         <h3>Input</h3>
@@ -38,25 +37,11 @@
       </div>
     </div>
 
-    <!-- UNET RESULT -->
+    <!-- ================= UNET ================= -->
 
     {% if result.method == "unet" %}
 
     <h2>U-Net Segmentation</h2>
-
-    {% if result.metrics %}
-
-    <h2>Model Evaluation</h2>
-
-    <div class="metrics">
-      <p><b>IoU:</b> {{result.metrics.iou}}</p>
-      <p><b>Dice:</b> {{result.metrics.dice}}</p>
-      <p><b>Accuracy:</b> {{result.metrics.accuracy}}</p>
-      <p><b>Precision:</b> {{result.metrics.precision}}</p>
-      <p><b>Recall:</b> {{result.metrics.recall}}</p>
-    </div>
-
-    {% endif %}
 
     <div class="grid">
       <div class="card">
@@ -70,9 +55,40 @@
       </div>
     </div>
 
-    {% endif %}
+    {% if result.metrics %}
 
-    <!-- TRADITIONAL PIPELINE -->
+    <h2>Model Evaluation</h2>
+
+    <table border="1" cellpadding="10">
+      <tr>
+        <th>Metric</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>IoU</td>
+        <td>{{result.metrics.iou or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Dice</td>
+        <td>{{result.metrics.dice or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Accuracy</td>
+        <td>{{result.metrics.accuracy or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Precision</td>
+        <td>{{result.metrics.precision or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Recall</td>
+        <td>{{result.metrics.recall or 'N/A'}}</td>
+      </tr>
+    </table>
+
+    {% endif %} {% endif %}
+
+    <!-- ================= TRADITIONAL ================= -->
 
     {% if result.method == "traditional" %}
 
@@ -80,12 +96,10 @@
 
     <div class="grid">
       {% for name, img in result.pipeline.items() %}
-
       <div class="card">
         <h3>{{ name.replace('_',' ').title() }}</h3>
         <img src="/{{img}}" />
       </div>
-
       {% endfor %}
     </div>
 
@@ -93,13 +107,32 @@
 
     <h2>Traditional Segmentation Evaluation</h2>
 
-    <div class="metrics">
-      <p><b>IoU:</b> {{result.metrics.iou}}</p>
-      <p><b>Dice:</b> {{result.metrics.dice}}</p>
-      <p><b>Accuracy:</b> {{result.metrics.accuracy}}</p>
-      <p><b>Precision:</b> {{result.metrics.precision}}</p>
-      <p><b>Recall:</b> {{result.metrics.recall}}</p>
-    </div>
+    <table border="1" cellpadding="10">
+      <tr>
+        <th>Metric</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>IoU</td>
+        <td>{{result.metrics.iou or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Dice</td>
+        <td>{{result.metrics.dice or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Accuracy</td>
+        <td>{{result.metrics.accuracy or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Precision</td>
+        <td>{{result.metrics.precision or 'N/A'}}</td>
+      </tr>
+      <tr>
+        <td>Recall</td>
+        <td>{{result.metrics.recall or 'N/A'}}</td>
+      </tr>
+    </table>
 
     {% endif %} {% endif %} {% endif %}
   </body>

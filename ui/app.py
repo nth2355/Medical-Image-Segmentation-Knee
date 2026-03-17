@@ -1,5 +1,6 @@
 import sys
 import os
+import uuid
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -39,12 +40,13 @@ def index():
         method = request.form["method"]
 
         # -----------------------------
-        # save uploaded image
+        # generate unique filename
         # -----------------------------
 
-        filename = file.filename
-        input_path = os.path.join(UPLOAD_FOLDER, filename)
+        uid = str(uuid.uuid4())
+        filename = f"{uid}_{file.filename}"
 
+        input_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(input_path)
 
         img = cv2.imread(input_path)
@@ -55,32 +57,31 @@ def index():
 
         gt_path = os.path.join(
             "dataset/roboflow/test/masks",
-            filename
+            file.filename  # dùng tên gốc để match dataset
         )
 
         gt_mask = None
 
         if os.path.exists(gt_path):
-
             gt_mask = cv2.imread(gt_path, 0)
             gt_mask = (gt_mask > 127).astype("uint8")
 
         # =============================
-        # U-NET SEGMENTATION
+        # U-NET
         # =============================
 
         if method == "unet":
 
             mask = predict_mask(img)
 
-            # compute metrics
+            # metrics
             metrics = None
             if gt_mask is not None:
                 metrics = segmentation_metrics(mask, gt_mask)
 
-            # save results
-            mask_path = os.path.join(RESULT_FOLDER, "mask.png")
-            overlay_path = os.path.join(RESULT_FOLDER, "overlay.png")
+            # save
+            mask_path = os.path.join(RESULT_FOLDER, f"mask_{uid}.png")
+            overlay_path = os.path.join(RESULT_FOLDER, f"overlay_{uid}.png")
 
             cv2.imwrite(mask_path, mask * 255)
 
@@ -89,38 +90,32 @@ def index():
 
             result = {
                 "input": f"static/uploads/{filename}",
-                "mask": "static/results/mask.png",
-                "overlay": "static/results/overlay.png",
+                "mask": f"static/results/mask_{uid}.png",
+                "overlay": f"static/results/overlay_{uid}.png",
                 "metrics": metrics,
                 "method": "unet"
             }
 
         # =============================
-        # TRADITIONAL PIPELINE
+        # TRADITIONAL
         # =============================
 
         else:
 
             steps = traditional_pipeline(img)
-
             pipeline_paths = {}
 
             for name, image in steps.items():
 
-                save_path = os.path.join(RESULT_FOLDER, f"{name}.png")
+                save_path = os.path.join(RESULT_FOLDER, f"{name}_{uid}.png")
 
-                # convert 0-1 image → 0-255
                 if image.max() <= 1:
                     image = image * 255
 
                 cv2.imwrite(save_path, image)
+                pipeline_paths[name] = f"static/results/{name}_{uid}.png"
 
-                pipeline_paths[name] = f"static/results/{name}.png"
-
-            # -----------------------------
-            # get final mask
-            # -----------------------------
-
+            # final mask
             final_mask = list(steps.values())[-1]
 
             if final_mask.max() > 1:
@@ -128,9 +123,16 @@ def index():
 
             final_mask = (final_mask > 0.5).astype("uint8")
 
-            # compute metrics
-            metrics = None
+            # metrics
             if gt_mask is not None:
+
+                # resize pred về size của gt
+                final_mask = cv2.resize(
+                    final_mask,
+                    (gt_mask.shape[1], gt_mask.shape[0]),
+                    interpolation=cv2.INTER_NEAREST
+                )
+
                 metrics = segmentation_metrics(final_mask, gt_mask)
 
             result = {
@@ -141,21 +143,6 @@ def index():
             }
 
     return render_template("index.html", result=result)
-
-
-# -----------------------------
-# DATASET EVALUATION PAGE
-# -----------------------------
-
-@app.route("/evaluate")
-def evaluate():
-
-    metrics = evaluate_dataset()
-
-    return render_template(
-        "evaluation.html",
-        metrics=metrics
-    )
 
 
 # -----------------------------

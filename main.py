@@ -10,7 +10,7 @@ from traditional.visualization import draw_text
 SCALE_FACTOR = 0.1
 
 
-img = cv2.imread("dataset/images/knee_xray2.jpg",0)
+img = cv2.imread("dataset/images/knee_xray3.jpg",0)
 
 roi_img = roi(img)
 

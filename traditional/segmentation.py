@@ -11,6 +11,10 @@ def contour_mask(image, area_thresh=5000):
     for c in contours:
 
         if cv2.contourArea(c) > area_thresh:
+            x, y, w_box, h_box = cv2.boundingRect(c)
+            ratio = h_box / (w_box  +1e-5)
+            if ratio > 5:
+                continue
             cv2.drawContours(mask, [c], -1, 255, -1)
 
     return mask
@@ -18,7 +22,7 @@ def contour_mask(image, area_thresh=5000):
 
 def refine_mask(mask):
 
-    kernel = np.ones((7,7), np.uint8)
+    kernel = np.ones((5,5), np.uint8)
 
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
