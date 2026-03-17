@@ -7,10 +7,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from flask import Flask, render_template, request
 import cv2
 
-from traditional.pipeline import traditional_pipeline
+# from traditional.pipeline import traditional_pipeline
 from deeplearning.predict import predict_mask, overlay_mask
 from evaluation.metrics import segmentation_metrics
 from evaluation.evaluate_dataset import evaluate_dataset
+from traditional.main_pipeline import run_main_pipeline
 
 app = Flask(__name__)
 
@@ -102,28 +103,56 @@ def index():
 
         else:
 
-            steps = traditional_pipeline(img)
-            pipeline_paths = {}
+            # steps = traditional_pipeline(img)
+            # pipeline_paths = {}
 
-            for name, image in steps.items():
+            # for name, image in steps.items():
 
-                save_path = os.path.join(RESULT_FOLDER, f"{name}_{uid}.png")
+            #     save_path = os.path.join(RESULT_FOLDER, f"{name}_{uid}.png")
 
-                if image.max() <= 1:
-                    image = image * 255
+            #     if image.max() <= 1:
+            #         image = image * 255
 
-                cv2.imwrite(save_path, image)
-                pipeline_paths[name] = f"static/results/{name}_{uid}.png"
+            #     cv2.imwrite(save_path, image)
+            #     pipeline_paths[name] = f"static/results/{name}_{uid}.png"
 
-            # final mask
-            final_mask = list(steps.values())[-1]
+            # # final mask
+            # final_mask = list(steps.values())[-1]
 
-            if final_mask.max() > 1:
-                final_mask = final_mask / 255
+            # if final_mask.max() > 1:
+            #     final_mask = final_mask / 255
 
-            final_mask = (final_mask > 0.5).astype("uint8")
+            # final_mask = (final_mask > 0.5).astype("uint8")
 
+            # # metrics
+            # metrics = None
+            # if gt_mask is not None:
+
+            #     # resize pred về size của gt
+            #     final_mask = cv2.resize(
+            #         final_mask,
+            #         (gt_mask.shape[1], gt_mask.shape[0]),
+            #         interpolation=cv2.INTER_NEAREST
+            #     )
+
+            #     metrics = segmentation_metrics(final_mask, gt_mask)
+
+            # result = {
+            #     "input": f"static/uploads/{filename}",
+            #     "pipeline": pipeline_paths,
+            #     "metrics": metrics,
+            #     "method": "traditional"
+            # }
+            combined, final_mask = run_main_pipeline(input_path)
+
+            uid = str(uuid.uuid4())
+
+            grid_path = os.path.join(RESULT_FOLDER, f"grid_{uid}.png")
+
+            cv2.imwrite(grid_path, combined)
+            
             # metrics
+            metrics = None
             if gt_mask is not None:
 
                 # resize pred về size của gt
@@ -136,11 +165,11 @@ def index():
                 metrics = segmentation_metrics(final_mask, gt_mask)
 
             result = {
-                "input": f"static/uploads/{filename}",
-                "pipeline": pipeline_paths,
-                "metrics": metrics,
-                "method": "traditional"
-            }
+                    "input": f"static/uploads/{filename}",
+                    "grid": f"static/results/grid_{uid}.png",
+                    "method": "traditional",
+                    "metrics": metrics 
+             }
 
     return render_template("index.html", result=result)
 

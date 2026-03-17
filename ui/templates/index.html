@@ -95,12 +95,10 @@
     <h2>Traditional Processing Pipeline</h2>
 
     <div class="grid">
-      {% for name, img in result.pipeline.items() %}
       <div class="card">
-        <h3>{{ name.replace('_',' ').title() }}</h3>
-        <img src="/{{img}}" />
+        <h3>Pipeline Visualization</h3>
+        <img src="/{{result.grid}}" />
       </div>
-      {% endfor %}
     </div>
 
     {% if result.metrics %}

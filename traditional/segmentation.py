@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def contour_mask(image, area_thresh=5000):
+def contour_mask(image, area_thresh=500):
 
     contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -13,8 +13,8 @@ def contour_mask(image, area_thresh=5000):
         if cv2.contourArea(c) > area_thresh:
             x, y, w_box, h_box = cv2.boundingRect(c)
             ratio = h_box / (w_box  +1e-5)
-            if ratio > 5:
-                continue
+            # if ratio > 5:
+            #     continue
             cv2.drawContours(mask, [c], -1, 255, -1)
 
     return mask
