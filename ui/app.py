@@ -40,9 +40,7 @@ def index():
         file = request.files["image"]
         method = request.form["method"]
 
-        # -----------------------------
         # generate unique filename
-        # -----------------------------
 
         uid = str(uuid.uuid4())
         filename = f"{uid}_{file.filename}"
@@ -51,10 +49,7 @@ def index():
         file.save(input_path)
 
         img = cv2.imread(input_path)
-
-        # -----------------------------
         # find ground truth mask
-        # -----------------------------
 
         gt_path = os.path.join(
             "dataset/roboflow/test/masks",
@@ -67,9 +62,7 @@ def index():
             gt_mask = cv2.imread(gt_path, 0)
             gt_mask = (gt_mask > 127).astype("uint8")
 
-        # =============================
         # U-NET
-        # =============================
 
         if method == "unet":
 
@@ -96,10 +89,7 @@ def index():
                 "metrics": metrics,
                 "method": "unet"
             }
-
-        # =============================
         # TRADITIONAL
-        # =============================
 
         else:
 
@@ -174,9 +164,7 @@ def index():
     return render_template("index.html", result=result)
 
 
-# -----------------------------
 # RUN SERVER
-# -----------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)

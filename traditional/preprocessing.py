@@ -12,10 +12,10 @@ import numpy as np
 
 def roi(image):
     h, w = image.shape
-    return image[int(h*0.2):int(h*0.8), int(w*0.2):int(w*0.8)]
+    return image[0:h, int(w*0.2):int(w*0.8)]
 
 
-def clahe(image, clip=9.0, grid=(18,18)):
+def clahe(image, clip=11.0, grid=(16,16)):
     clahe = cv2.createCLAHE(clipLimit=clip, tileGridSize=grid)
     return clahe.apply(image)
 
